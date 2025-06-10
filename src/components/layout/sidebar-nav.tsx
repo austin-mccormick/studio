@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export default function AppSidebarNav() {
           <SidebarMenu className="p-2">
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} passHref legacyBehavior>
+                <Link href={item.href} passHref>
                   <SidebarMenuButton
                     asChild
                     isActive={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))}
@@ -53,10 +54,11 @@ export default function AppSidebarNav() {
                     )}
                     tooltip={item.label}
                   >
-                    <a>
+                    {/* The <a> tag is removed as Link now handles it */}
+                    <>
                       <item.icon className="mr-2 h-5 w-5 flex-shrink-0" />
                       <span>{item.label}</span>
-                    </a>
+                    </>
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>
