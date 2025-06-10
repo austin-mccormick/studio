@@ -13,14 +13,15 @@ import {
 } from '@/components/ui/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { Home, LayoutGrid, FolderKanban, Users, UserCircle, Settings, LogOut, ShieldQuestion, LogIn } from 'lucide-react';
+import { Home, LayoutGrid, FolderKanban, Users, UserCircle, Settings, LogOut, ShieldQuestion, LogIn, ClipboardList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Spinner } from '@/components/ui/spinner';
 
 const authenticatedNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
-  { href: '/daily-scrum', label: 'Daily Scrum', icon: ShieldQuestion },
+  { href: '/daily-scrum', label: 'My Daily Scrum', icon: ShieldQuestion },
+  { href: '/daily-standup', label: 'Daily Standup', icon: ClipboardList },
   { href: '/projects', label: 'Projects', icon: FolderKanban },
   { href: '/users', label: 'Users', icon: Users },
   { href: '/profile', label: 'Profile', icon: UserCircle },
@@ -37,13 +38,11 @@ export default function AppSidebarNav() {
   
   const navItemsToDisplay = user ? authenticatedNavItems : [];
 
-  // Do not render sidebar if on auth pages and not logged in, or during initial load for auth pages
   const authPages = ['/', '/register', '/forgot-password'];
   if (authPages.includes(pathname) && (!user || isLoading)) {
       return null;
   }
   
-  // If auth context is still loading and we are not on an auth page, show a spinner in sidebar area
   if (isLoading && !authPages.includes(pathname)) {
     return (
         <div className="flex flex-col h-full">
