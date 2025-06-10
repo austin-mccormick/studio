@@ -20,11 +20,11 @@ export default function LoginPage() {
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoading) { 
+    if (!isLoading) {
       if (user) {
         router.replace('/dashboard');
       } else {
-        setIsPageLoading(false); 
+        setIsPageLoading(false);
       }
     }
   }, [user, isLoading, router]);
@@ -32,7 +32,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError(''); // Clear previous errors
-    if (!isLoading) { 
+    if (!isLoading) {
       try {
         await login(email, password);
         // Successful login is handled by redirection within the login function in AuthContext
@@ -52,13 +52,13 @@ export default function LoginPage() {
       </div>
     );
   }
-  
-  if (user) { 
+
+  if (user) {
       return (
           <div className="flex min-h-screen items-center justify-center bg-background">
             <Spinner size="large" />
           </div>
-      ); 
+      );
   }
 
   return (
