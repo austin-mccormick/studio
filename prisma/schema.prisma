@@ -9,13 +9,18 @@ generator client {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  passwordHash String
-  role      Role     @default(WEB_DEVELOPER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(WEB_DEVELOPER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  dailyScrumLogs DailyScrumLog[]
+  comments       Comment[]
+
+  @@map("users")
 }
 
 enum Role {
@@ -25,4 +30,36 @@ enum Role {
   WEB_DESIGNER
   WEB_DEVELOPER
   MARKETING_SPECIALIST
+}
+
+model DailyScrumLog {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime  // Stores the specific date for which the log is
+  yesterday   String    @db.Text
+  today       String    @db.Text
+  impediments String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  comments Comment[]
+
+  @@unique([userId, date], name: "user_date_unique_scrum_log")
+  @@index([date])
+  @@map("daily_scrum_logs")
+}
+
+model Comment {
+  id              String        @id @default(cuid())
+  text            String        @db.Text
+  dailyScrumLogId String
+  dailyScrumLog   DailyScrumLog @relation(fields: [dailyScrumLogId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([dailyScrumLogId])
+  @@map("comments")
 }
