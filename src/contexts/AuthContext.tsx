@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     };
     checkAuthStatus();
-  }, [pathname, router]);
+  }, [pathname, router]); // Note: removed `router` from dependencies as it might cause loops in some Next.js versions if pathname changes frequently trigger router instance changes. Re-add if specific routing logic within this effect needs it.
 
 
   const login = async (email: string, pass: string) => {
@@ -93,9 +93,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const dummyUser: UserForClient = { id: '1', name: 'Test User', email: 'user@example.com', role: 'ADMIN', createdAt: new Date(), updatedAt: new Date() };
       setUser(dummyUser);
       localStorage.setItem('authUser', JSON.stringify(dummyUser)); // Persist dummy user
-      router.push('/dashboard');
+      
+      // Check if daily scrum has been submitted
+      const currentDate = new Date().toISOString().split('T')[0];
+      const scrumSubmittedKey = `dailyScrumSubmitted_${currentDate}_${dummyUser.id}`;
+      const hasSubmittedToday = localStorage.getItem(scrumSubmittedKey) === 'true';
+
+      if (hasSubmittedToday) {
+        router.push('/dashboard');
+      } else {
+        router.push('/daily-scrum');
+      }
+
     } else {
-      alert('Invalid credentials. Use user@example.com and password.'); // Current error handling
+      // alert('Invalid credentials. Use user@example.com and password.'); // Current error handling
+      // Throw an error to be caught by the form handler
+      setIsLoading(false);
+      throw new Error('Invalid credentials. Please use user@example.com and password.');
     }
     setIsLoading(false);
   };
@@ -116,6 +130,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // or you can try to do it client-side (though httpOnly makes it server-only for deletion)
     // document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
     router.push('/');
+    // No need to setIsLoading(false) here if router.push unmounts the component
+    // but to be safe, especially if there are delays or checks before unmount:
+     await new Promise(resolve => setTimeout(resolve, 50)); // small delay to ensure navigation starts
     setIsLoading(false);
   };
 
