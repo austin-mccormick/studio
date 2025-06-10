@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-} from '@/components/ui/sidebar'; // Ensured Sidebar is not imported here as it's used in app-layout
+} from '@/components/ui/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Home, LayoutGrid, FolderKanban, Users, UserCircle, Settings, LogOut, ShieldQuestion } from 'lucide-react';
