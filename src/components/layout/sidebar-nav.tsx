@@ -4,17 +4,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar'; // Ensured Sidebar is not imported here as it's used in app-layout
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import { Home, LayoutGrid, FolderKanban, Users, UserCircle, Settings, LogOut, ShieldQuestion } from 'lucide-react'; // Added ShieldQuestion for Daily Scrum
+import { Home, LayoutGrid, FolderKanban, Users, UserCircle, Settings, LogOut, ShieldQuestion } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -42,25 +41,22 @@ export default function AppSidebarNav() {
           <SidebarMenu className="p-2">
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} passHref>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))}
-                    className={cn(
-                      'w-full justify-start rounded-md text-sm',
-                      (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)))
-                        ? 'bg-primary/10 text-primary hover:bg-primary/20'
-                        : 'hover:bg-accent/50 hover:text-accent-foreground'
-                    )}
-                    tooltip={item.label}
-                  >
-                    {/* The <a> tag is removed as Link now handles it */}
-                    <>
-                      <item.icon className="mr-2 h-5 w-5 flex-shrink-0" />
-                      <span>{item.label}</span>
-                    </>
-                  </SidebarMenuButton>
-                </Link>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))}
+                  className={cn(
+                    'w-full justify-start rounded-md text-sm',
+                    (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)))
+                      ? 'bg-primary/10 text-primary hover:bg-primary/20'
+                      : 'hover:bg-accent/50 hover:text-accent-foreground'
+                  )}
+                  tooltip={item.label}
+                >
+                  <Link href={item.href}>
+                    <item.icon className="mr-2 h-5 w-5 flex-shrink-0" />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
