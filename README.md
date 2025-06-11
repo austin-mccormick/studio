@@ -44,7 +44,30 @@ npm install
 # pnpm install
 ```
 
-### 3. Set Up Environment Variables
+### 3. Set Up a Local PostgreSQL Database
+
+This application uses PostgreSQL as its database. You'll need a running PostgreSQL instance. Here are a couple of common ways to set one up:
+
+*   **Direct Installation:** Download and install PostgreSQL directly from the [official website](https://www.postgresql.org/download/) for your operating system. During installation, you'll typically set a password for the default `postgres` user. You'll also need to create a database for the application (e.g., `structureflow_db`).
+*   **Using Docker (Recommended for isolated environments):**
+    If you have Docker installed, you can run PostgreSQL in a container.
+    ```bash
+    docker run --name structureflow-postgres -e POSTGRES_PASSWORD=yoursecurepassword -e POSTGRES_DB=structureflow_db -p 5432:5432 -d postgres
+    ```
+    Replace `yoursecurepassword` with a strong password. This command will:
+    *   Create a container named `structureflow-postgres`.
+    *   Set the PostgreSQL superuser (`postgres`) password to `yoursecurepassword`.
+    *   Create a database named `structureflow_db`.
+    *   Map port `5432` on your host to port `5432` in the container.
+    *   Run the container in detached mode (`-d`).
+
+    Your connection string would then typically use `postgres` as the user, `yoursecurepassword` as the password, `localhost` as the host, `5432` as the port, and `structureflow_db` as the database.
+
+**After setting up PostgreSQL, ensure it's running and you have:**
+*   A database created (e.g., `structureflow_db`).
+*   The username, password, host, and port for connecting to your database.
+
+### 4. Set Up Environment Variables
 
 The application requires certain environment variables to function correctly, especially for database connection and JWT authentication.
 
@@ -63,7 +86,6 @@ DATABASE_URL="postgresql://your_db_user:your_db_password@localhost:5432/structur
 
 # JWT Secret for signing authentication tokens
 # Generate a strong, random string for this.
-# Example (DO NOT USE THIS IN PRODUCTION): "your-super-secret-jwt-key-that-is-very-long-and-random"
 JWT_SECRET="replace_with_a_strong_random_secret_key"
 
 # Optional: Google AI API Key for Genkit (if using AI features)
@@ -71,15 +93,20 @@ JWT_SECRET="replace_with_a_strong_random_secret_key"
 ```
 
 **Important:**
-*   Replace `your_db_user`, `your_db_password`, `localhost:5432`, and `structureflow_db` with your actual PostgreSQL credentials and database name.
-*   Ensure the PostgreSQL server is running and accessible.
-*   Generate a **strong, random string** for `JWT_SECRET`. Do not use weak or predictable secrets.
+*   **`DATABASE_URL`**: Replace `your_db_user`, `your_db_password`, `localhost:5432`, and `structureflow_db` with your actual PostgreSQL credentials and database name based on your setup in Step 3.
+*   **`JWT_SECRET`**: This is crucial for security. **DO NOT USE WEAK OR PREDICTABLE SECRETS.**
+    *   **How to generate a strong JWT_SECRET:**
+        *   Use a password manager to generate a long, random string (e.g., 64+ characters).
+        *   Use an online cryptographically secure random string generator.
+        *   On Linux/macOS, you can use a command like: `openssl rand -hex 32` (which gives a 64-character hex string).
+    *   A good secret should be long and contain a mix of uppercase letters, lowercase letters, numbers, and symbols if your system supports it, though a long hex string is also very strong.
+    *   **Example of a generated secret (DO NOT USE THIS):** `a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0`
 
-### 4. Set Up the Database with Prisma
+### 5. Set Up the Database Schema with Prisma
 
 Prisma is used to manage the database schema and interactions.
 
-*   **Ensure your PostgreSQL database is created and running.**
+*   **Ensure your PostgreSQL database is created and running, and your `.env.local` file has the correct `DATABASE_URL`.**
 *   **Apply the schema to your database:**
     This command will create the tables defined in `prisma/schema.prisma` in your database.
     ```bash
@@ -96,7 +123,7 @@ Prisma is used to manage the database schema and interactions.
     ```
     This step is usually run automatically after `db push` or `migrate dev`, but it's good to know.
 
-### 5. Run the Development Server
+### 6. Run the Development Server
 
 The application consists of a Next.js frontend/backend and potentially a Genkit server for AI functionalities.
 
@@ -113,7 +140,7 @@ The application consists of a Next.js frontend/backend and potentially a Genkit 
     ```
     This will start the Genkit development flow server, usually on `http://localhost:3400`.
 
-### 6. Access the Application
+### 7. Access the Application
 
 Open your web browser and navigate to `http://localhost:9002` (or the port specified in your terminal).
 
@@ -155,3 +182,4 @@ In the `package.json` file, you can find various scripts:
 ## License
 
 (Specify the license for your project, e.g., MIT).
+
